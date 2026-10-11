@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Login - CareNest Healthcare Platform{% endblock %}
+
+{% block content %}
+<div class="auth-page-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-icon-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+        </svg>
+      </div>
+      <h2>Welcome Back to CareNest</h2>
+      <p>Log in to access your prescriptions, health orders, and documents</p>
+    </div>
+
+    <!-- Demo Credentials Quick Fill Banner -->
+    <div class="demo-account-box">
+      <div class="demo-box-content">
+        <span class="demo-badge">Evaluation Demo Account</span>
+        <div class="demo-creds-preview">
+          <span>Email: <code>demo@carenest.in</code></span>
+          <span>Password: <code>Password@123</code></span>
+        </div>
+      </div>
+      <button type="button" class="btn btn-sm btn-outline-teal" onclick="fillDemoCredentials()">Auto-Fill Demo</button>
+    </div>
+
+    <!-- Login Form -->
+    <form id="login-form" class="auth-form" novalidate onsubmit="event.preventDefault(); handleLogin();">
+      <!-- Identifier: Email or Mobile -->
+      <div class="form-group">
+        <label for="identifier" class="form-label">Email Address or Mobile Number <span class="required-star">*</span></label>
+        <div class="input-with-icon">
+          <svg class="field-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+          </svg>
+          <input type="text" id="identifier" name="identifier" class="form-input" placeholder="e.g. demo@carenest.in or 9876543210" required autocomplete="username">
+        </div>
+        <div class="field-error-msg" id="err-identifier"></div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <div class="label-with-link">
+          <label for="password" class="form-label">Password <span class="required-star">*</span></label>
+          <a href="/forgot-password" class="link-teal text-sm">Forgot password?</a>
+        </div>
+        <div class="input-with-icon password-input-wrap">
+          <svg class="field-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+          </svg>
+          <input type="password" id="password" name="password" class="form-input" placeholder="Enter your password" required autocomplete="current-password">
+          <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('password', this)" aria-label="Toggle password visibility">👁️</button>
+        </div>
+        <div class="field-error-msg" id="err-password"></div>
+      </div>
+
+      <!-- Remember Me -->
+      <div class="form-check-group justify-between">
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" id="remember_me" name="remember_me" class="form-checkbox">
+          <span class="text-sm text-slate-700">Remember this device (7 days)</span>
+        </label>
+      </div>
+
+      <!-- Alert Box -->
+      <div class="alert-box alert-error hidden" id="login-alert"></div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="btn btn-accent btn-full btn-lg mt-3" id="login-submit-btn">
+        <span class="btn-text">Sign In Securely</span>
+        <span class="spinner hidden" id="login-spinner"></span>
+      </button>
+
+      <div class="auth-footer-prompt">
+        <span>Don't have a CareNest account?</span>
+        <a href="/signup" class="link-teal font-semibold">Sign up now</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/auth.js"></script>
+<script>
+  function fillDemoCredentials() {
+    document.getElementById('identifier').value = 'demo@carenest.in';
+    document.getElementById('password').value = 'Password@123';
+    showToast('Demo credentials populated. Click "Sign In Securely"!', 'info');
+  }
+</script>
+{% endblock %}

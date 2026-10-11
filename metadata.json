@@ -1,0 +1,6 @@
+{
+  "name": "CareNest - Online Pharmacy & Healthcare Platform",
+  "description": "CareNest is a trusted online pharmacy and healthcare platform offering genuine medicines, prescription uploads, health records management, and profile services.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

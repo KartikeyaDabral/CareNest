@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up - CareNest Healthcare Platform{% endblock %}
+
+{% block content %}
+<div class="auth-page-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-icon-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+        </svg>
+      </div>
+      <h2>Create Your CareNest Account</h2>
+      <p>Save up to 72% on prescription medicines & manage healthcare records securely</p>
+    </div>
+
+    <!-- Signup Form -->
+    <form id="signup-form" class="auth-form" novalidate onsubmit="event.preventDefault(); handleSignup();">
+      <!-- Full Name -->
+      <div class="form-group">
+        <label for="full_name" class="form-label">Full Name <span class="required-star">*</span></label>
+        <div class="input-with-icon">
+          <svg class="field-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+          </svg>
+          <input type="text" id="full_name" name="full_name" class="form-input" placeholder="e.g. Ananya Sharma" required autocomplete="name">
+        </div>
+        <div class="field-error-msg" id="err-full_name"></div>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email" class="form-label">Email Address <span class="required-star">*</span></label>
+        <div class="input-with-icon">
+          <svg class="field-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+          </svg>
+          <input type="email" id="email" name="email" class="form-input" placeholder="name@example.com" required autocomplete="email">
+        </div>
+        <div class="field-error-msg" id="err-email"></div>
+      </div>
+
+      <!-- Mobile Number -->
+      <div class="form-group">
+        <label for="mobile" class="form-label">Mobile Number (India) <span class="required-star">*</span></label>
+        <div class="input-group">
+          <span class="input-prefix">+91</span>
+          <input type="tel" id="mobile" name="mobile" class="form-input rounded-left-none" placeholder="10-digit mobile number" maxlength="10" required autocomplete="tel">
+        </div>
+        <span class="field-hint">Used for prescription updates & delivery OTP</span>
+        <div class="field-error-msg" id="err-mobile"></div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password" class="form-label">Create Password <span class="required-star">*</span></label>
+        <div class="input-with-icon password-input-wrap">
+          <svg class="field-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+          </svg>
+          <input type="password" id="password" name="password" class="form-input" placeholder="At least 8 characters" required autocomplete="new-password" oninput="checkPasswordRequirements(this.value)">
+          <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('password', this)" aria-label="Toggle password visibility">👁️</button>
+        </div>
+        <!-- Real-time requirements checklist -->
+        <div class="password-checklist" id="password-checklist">
+          <div class="check-item" id="req-length"><span>✕</span> At least 8 characters</div>
+          <div class="check-item" id="req-upper"><span>✕</span> At least one uppercase letter (A-Z)</div>
+          <div class="check-item" id="req-lower"><span>✕</span> At least one lowercase letter (a-z)</div>
+          <div class="check-item" id="req-number"><span>✕</span> At least one number (0-9)</div>
+          <div class="check-item" id="req-special"><span>✕</span> At least one special symbol (!@#$%^&*)</div>
+        </div>
+        <div class="field-error-msg" id="err-password"></div>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="form-group">
+        <label for="confirm_password" class="form-label">Confirm Password <span class="required-star">*</span></label>
+        <div class="input-with-icon password-input-wrap">
+          <svg class="field-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+          </svg>
+          <input type="password" id="confirm_password" name="confirm_password" class="form-input" placeholder="Repeat your password" required autocomplete="new-password">
+          <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('confirm_password', this)" aria-label="Toggle password visibility">👁️</button>
+        </div>
+        <div class="field-error-msg" id="err-confirm_password"></div>
+      </div>
+
+      <!-- Terms & Conditions Checkbox -->
+      <div class="form-check-group">
+        <input type="checkbox" id="terms" name="terms" class="form-checkbox" required>
+        <label for="terms" class="checkbox-label">
+          I agree to CareNest's <a href="#" onclick="showTermsModal(event)" class="text-teal font-medium">Terms of Service</a> and confirm that I am at least 18 years of age.
+        </label>
+      </div>
+      <div class="field-error-msg" id="err-terms"></div>
+
+      <!-- Form Error Alert Banner -->
+      <div class="alert-box alert-error hidden" id="signup-alert"></div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="btn btn-accent btn-full btn-lg mt-3" id="signup-submit-btn">
+        <span class="btn-text">Create Account & Proceed</span>
+        <span class="spinner hidden" id="signup-spinner"></span>
+      </button>
+
+      <div class="auth-footer-prompt">
+        <span>Already have a CareNest account?</span>
+        <a href="/login" class="link-teal font-semibold">Log in here</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/auth.js"></script>
+{% endblock %}

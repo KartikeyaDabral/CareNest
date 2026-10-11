@@ -1,0 +1,294 @@
+{% extends "base.html" %}
+
+{% block title %}Patient Profile - CareNest Healthcare Platform{% endblock %}
+
+{% block content %}
+<div class="profile-page-wrapper">
+  <div class="page-container">
+    <!-- Profile Hero Card -->
+    <div class="profile-hero-card">
+      <div class="profile-avatar-block">
+        <div class="profile-avatar-circle" id="profile-hero-avatar">CN</div>
+        <div class="profile-hero-meta">
+          <div class="flex items-center gap-2">
+            <h2 id="profile-hero-name">Loading Patient...</h2>
+            <span class="reg-status-badge verified" id="profile-reg-status">Registered</span>
+          </div>
+          <div class="profile-hero-contacts">
+            <span id="profile-hero-email">email@carenest.in</span>
+            <span>·</span>
+            <span id="profile-hero-mobile">+91 ----------</span>
+            <span>·</span>
+            <span id="profile-hero-since">Member since 2026</span>
+          </div>
+        </div>
+      </div>
+      <div class="profile-hero-actions">
+        <button type="button" class="btn btn-outline-teal btn-sm" id="toggle-edit-btn" onclick="toggleEditMode()">
+          <svg viewBox="0 0 20 20" fill="currentColor" style="width:15px;height:15px;margin-right:5px;"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>
+          <span id="edit-btn-text">Edit Details</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Grid: Profile Details Form + Security Column -->
+    <div class="profile-grid">
+      <!-- Left Column: Registration Details (View/Edit) -->
+      <div class="profile-card">
+        <div class="card-section-header">
+          <div>
+            <h3>Personal & Medical Profile</h3>
+            <p>Information stored in <code>user_registration</code> database record</p>
+          </div>
+          <div id="edit-save-controls" class="hidden">
+            <button type="button" class="btn btn-outline-teal btn-sm" onclick="cancelEditMode()">Cancel</button>
+            <button type="button" class="btn btn-accent btn-sm ml-2" id="save-profile-btn" onclick="saveProfileChanges()">
+              <span class="btn-text">Save Changes</span>
+              <span class="spinner hidden" id="save-spinner"></span>
+            </button>
+          </div>
+        </div>
+
+        <form id="profile-form" onsubmit="event.preventDefault(); saveProfileChanges();">
+          <!-- Section 1: Personal Details -->
+          <div class="profile-subgroup">
+            <h4 class="subgroup-title">Personal Identification</h4>
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="prof_first_name" class="form-label">First Name</label>
+                <input type="text" id="prof_first_name" name="first_name" class="form-input" disabled required>
+              </div>
+              <div class="form-group">
+                <label for="prof_last_name" class="form-label">Last Name</label>
+                <input type="text" id="prof_last_name" name="last_name" class="form-input" disabled required>
+              </div>
+            </div>
+
+            <div class="form-row-3">
+              <div class="form-group">
+                <label for="prof_date_of_birth" class="form-label">Date of Birth</label>
+                <input type="date" id="prof_date_of_birth" name="date_of_birth" class="form-input" disabled required>
+              </div>
+              <div class="form-group">
+                <label for="prof_gender" class="form-label">Gender</label>
+                <select id="prof_gender" name="gender" class="form-select" disabled required>
+                  <option value="Female">Female</option>
+                  <option value="Male">Male</option>
+                  <option value="Other">Other</option>
+                  <option value="Prefer not to say">Prefer not to say</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="prof_blood_group" class="form-label">Blood Group</label>
+                <select id="prof_blood_group" name="blood_group" class="form-select" disabled>
+                  <option value="">Not Specified</option>
+                  <option value="A+">A+</option>
+                  <option value="A-">A-</option>
+                  <option value="B+">B+</option>
+                  <option value="B-">B-</option>
+                  <option value="O+">O+</option>
+                  <option value="O-">O-</option>
+                  <option value="AB+">AB+</option>
+                  <option value="AB-">AB-</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: Contact & Address -->
+          <div class="profile-subgroup">
+            <h4 class="subgroup-title">Contact & Delivery Address</h4>
+            <div class="form-row-3">
+              <div class="form-group">
+                <label for="prof_email" class="form-label">Email (Account)</label>
+                <input type="email" id="prof_email" name="email" class="form-input bg-disabled" disabled readonly>
+              </div>
+              <div class="form-group">
+                <label for="prof_mobile" class="form-label">Primary Mobile</label>
+                <input type="tel" id="prof_mobile" name="mobile" class="form-input" maxlength="10" disabled required>
+              </div>
+              <div class="form-group">
+                <label for="prof_alt_mobile" class="form-label">Alternate Mobile</label>
+                <input type="tel" id="prof_alt_mobile" name="alternate_mobile" class="form-input" maxlength="10" disabled>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="prof_address_line1" class="form-label">Address Line 1</label>
+              <input type="text" id="prof_address_line1" name="address_line1" class="form-input" disabled required>
+            </div>
+
+            <div class="form-group">
+              <label for="prof_address_line2" class="form-label">Address Line 2 (Optional)</label>
+              <input type="text" id="prof_address_line2" name="address_line2" class="form-input" disabled>
+            </div>
+
+            <div class="form-row-3">
+              <div class="form-group">
+                <label for="prof_city" class="form-label">City</label>
+                <input type="text" id="prof_city" name="city" class="form-input" disabled required>
+              </div>
+              <div class="form-group">
+                <label for="prof_state" class="form-label">State / UT</label>
+                <select id="prof_state" name="state" class="form-select" disabled required>
+                  <option value="Andhra Pradesh">Andhra Pradesh</option>
+                  <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                  <option value="Assam">Assam</option>
+                  <option value="Bihar">Bihar</option>
+                  <option value="Chhattisgarh">Chhattisgarh</option>
+                  <option value="Delhi">Delhi (NCT)</option>
+                  <option value="Goa">Goa</option>
+                  <option value="Gujarat">Gujarat</option>
+                  <option value="Haryana">Haryana</option>
+                  <option value="Himachal Pradesh">Himachal Pradesh</option>
+                  <option value="Jharkhand">Jharkhand</option>
+                  <option value="Karnataka">Karnataka</option>
+                  <option value="Kerala">Kerala</option>
+                  <option value="Madhya Pradesh">Madhya Pradesh</option>
+                  <option value="Maharashtra">Maharashtra</option>
+                  <option value="Manipur">Manipur</option>
+                  <option value="Meghalaya">Meghalaya</option>
+                  <option value="Mizoram">Mizoram</option>
+                  <option value="Nagaland">Nagaland</option>
+                  <option value="Odisha">Odisha</option>
+                  <option value="Punjab">Punjab</option>
+                  <option value="Rajasthan">Rajasthan</option>
+                  <option value="Sikkim">Sikkim</option>
+                  <option value="Tamil Nadu">Tamil Nadu</option>
+                  <option value="Telangana">Telangana</option>
+                  <option value="Tripura">Tripura</option>
+                  <option value="Uttar Pradesh">Uttar Pradesh</option>
+                  <option value="Uttarakhand">Uttarakhand</option>
+                  <option value="West Bengal">West Bengal</option>
+                  <option value="Other Territory">Other UT</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="prof_pincode" class="form-label">Pincode</label>
+                <input type="text" id="prof_pincode" name="pincode" class="form-input" maxlength="6" disabled required>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 3: Health Info & Emergency Contact -->
+          <div class="profile-subgroup">
+            <h4 class="subgroup-title">Medical Information & Emergency Contact</h4>
+            <div class="form-group">
+              <label for="prof_allergies" class="form-label">Known Allergies</label>
+              <input type="text" id="prof_allergies" name="allergies" class="form-input" disabled placeholder="None recorded">
+            </div>
+
+            <div class="form-group">
+              <label for="prof_chronic" class="form-label">Chronic Conditions</label>
+              <input type="text" id="prof_chronic" name="chronic_conditions" class="form-input" disabled placeholder="None recorded">
+            </div>
+
+            <div class="form-group">
+              <label for="prof_meds" class="form-label">Current Routine Medications</label>
+              <input type="text" id="prof_meds" name="current_medications" class="form-input" disabled placeholder="None recorded">
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="prof_emg_name" class="form-label">Emergency Contact Name</label>
+                <input type="text" id="prof_emg_name" name="emergency_contact_name" class="form-input" disabled required>
+              </div>
+              <div class="form-group">
+                <label for="prof_emg_phone" class="form-label">Emergency Contact Phone</label>
+                <input type="tel" id="prof_emg_phone" name="emergency_contact_phone" class="form-input" maxlength="10" disabled required>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Right Column: Security (Change Password) & Danger Zone -->
+      <div class="profile-sidebar-col">
+        <!-- Change Password Card -->
+        <div class="profile-card">
+          <div class="card-section-header">
+            <div>
+              <h3>Security & Password</h3>
+              <p>Change your CareNest account password</p>
+            </div>
+          </div>
+
+          <form id="change-pwd-form" onsubmit="event.preventDefault(); handleChangePassword();">
+            <div class="form-group">
+              <label for="pwd_current" class="form-label">Current Password <span class="required-star">*</span></label>
+              <input type="password" id="pwd_current" name="current_password" class="form-input" required autocomplete="current-password">
+            </div>
+
+            <div class="form-group">
+              <label for="pwd_new" class="form-label">New Password <span class="required-star">*</span></label>
+              <input type="password" id="pwd_new" name="new_password" class="form-input" required autocomplete="new-password" oninput="checkPasswordRequirements(this.value, 'change-pwd-checklist')">
+              <div class="password-checklist" id="change-pwd-checklist">
+                <div class="check-item" id="change-req-length"><span>✕</span> Min 8 characters</div>
+                <div class="check-item" id="change-req-upper"><span>✕</span> Uppercase letter</div>
+                <div class="check-item" id="change-req-lower"><span>✕</span> Lowercase letter</div>
+                <div class="check-item" id="change-req-number"><span>✕</span> Number (0-9)</div>
+                <div class="check-item" id="change-req-special"><span>✕</span> Special symbol</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="pwd_confirm" class="form-label">Confirm New Password <span class="required-star">*</span></label>
+              <input type="password" id="pwd_confirm" name="confirm_password" class="form-input" required autocomplete="new-password">
+            </div>
+
+            <div class="field-error-msg" id="change-pwd-error"></div>
+
+            <button type="submit" class="btn btn-accent btn-md btn-full mt-2" id="change-pwd-btn">
+              <span class="btn-text">Update Password</span>
+              <span class="spinner hidden" id="change-pwd-spinner"></span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Danger Zone Card -->
+        <div class="profile-card danger-zone-card">
+          <div class="card-section-header">
+            <div>
+              <h3 class="text-danger">Danger Zone</h3>
+              <p>Permanently remove your account and health records</p>
+            </div>
+          </div>
+          <p class="text-sm text-slate-600 mb-4">
+            Deleting your account removes all personal registrations, login credentials, and all uploaded medical prescriptions permanently from our servers.
+          </p>
+          <button type="button" class="btn btn-outline-danger btn-sm" onclick="openDeleteAccountModal()">
+            Delete My Account
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Account Confirmation Modal -->
+<div class="modal-backdrop hidden" id="delete-account-modal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 class="modal-title text-danger">Permanently Delete Account?</h3>
+      <button type="button" class="modal-close-btn" onclick="closeDeleteAccountModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="alert-box alert-error">
+        <strong>Warning:</strong> This action cannot be undone. All your prescriptions, profile history, and database records will be erased.
+      </div>
+      <p class="mt-3 text-sm">Please type <strong class="text-danger">DELETE</strong> below to confirm deletion:</p>
+      <input type="text" id="delete-confirmation-input" class="form-input mt-2" placeholder="Type DELETE" oninput="toggleDeleteConfirmBtn(this.value)">
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-teal btn-sm" onclick="closeDeleteAccountModal()">Cancel</button>
+      <button type="button" class="btn btn-danger btn-sm" id="confirm-account-delete-btn" disabled onclick="executeAccountDeletion()">
+        Permanently Delete Everything
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/profile.js"></script>
+{% endblock %}

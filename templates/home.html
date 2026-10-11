@@ -1,0 +1,371 @@
+{% extends "base.html" %}
+
+{% block title %}CareNest - Buy Genuine Medicines & Save Up to 72%{% endblock %}
+
+{% block content %}
+<div class="home-page">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-container">
+      <div class="hero-content">
+        <div class="hero-kicker">
+          <span class="pulse-dot"></span>
+          <span>India's Smart Healthcare & Medicine Platform</span>
+        </div>
+        <h1 class="hero-heading">
+          Save Up to <span class="highlight-orange">72%</span> on Genuine Medicines
+        </h1>
+        <p class="hero-subtext">
+          Upload your doctor's prescription. Our certified pharmacists match your prescribed brands with 
+          100% bioequivalent generic substitutes made by top WHO-GMP certified manufacturers.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="hero-cta-group">
+          <a href="/documents" class="btn btn-accent btn-lg hero-upload-btn">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+            </svg>
+            Upload Prescription
+          </a>
+          <a href="#savings-showcase" class="btn btn-outline-teal btn-lg">
+            See Generic Savings
+          </a>
+        </div>
+
+        <!-- Hero Stats Row -->
+        <div class="hero-stats-row">
+          <div class="stat-item">
+            <strong>10 Lakh+</strong>
+            <span>Satisfied Patients</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <strong>₹12+ Crore</strong>
+            <span>Medicine Costs Saved</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <strong>100%</strong>
+            <span>WHO-GMP Genuine</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Visual Card / Truemeds Style Prescription Upload Card -->
+      <div class="hero-visual">
+        <div class="hero-card">
+          <div class="hero-card-header">
+            <div class="rx-symbol">℞</div>
+            <div>
+              <h3>Fast Prescription Upload</h3>
+              <p>Pharmacist validation in under 15 minutes</p>
+            </div>
+          </div>
+
+          <div class="quick-dropzone" onclick="window.location.href='/documents'">
+            <svg class="dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+            </svg>
+            <p class="dropzone-title">Click or drag prescription here</p>
+            <span class="dropzone-sub">Supports PDF, JPG, PNG up to 5 MB</span>
+            <span class="btn btn-accent btn-sm mt-3">Upload Now</span>
+          </div>
+
+          <div class="rx-safety-note">
+            <svg viewBox="0 0 20 20" fill="#0b8471"><path fill-rule="evenodd" d="M10 1.944A11.954 11.954 0 012.166 5C2.056 5.649 2 6.319 2 7c0 5.225 3.34 9.67 8 11.317C14.66 16.67 18 12.225 18 7c0-.682-.057-1.35-.166-2.001A11.954 11.954 0 0110 1.944zM11 14a1 1 0 11-2 0 1 1 0 012 0zm0-7a1 1 0 100 2v3a1 1 0 100-2V7z" clip-rule="evenodd"/></svg>
+            <span>Your medical records are encrypted & accessible only by licensed pharmacists</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Savings Comparison Showcase (Truemeds Style) -->
+  <section class="section-container" id="savings-showcase">
+    <div class="section-header">
+      <span class="section-kicker">Clinical Equivalent · Triple Tested</span>
+      <h2 class="section-title">See How Much You Save with Generics</h2>
+      <p class="section-desc">
+        Generic medicines share the exact same active salt, dosage, and efficacy as branded drugs at a fraction of marketing and packaging costs.
+      </p>
+    </div>
+
+    <div class="comparison-grid">
+      <!-- Card 1 -->
+      <div class="comparison-card">
+        <div class="comp-header">
+          <span class="comp-category">Gastro & Acidity</span>
+          <span class="savings-tag">Save 74%</span>
+        </div>
+        <div class="comp-body">
+          <div class="comp-col brand-col">
+            <span class="col-kicker">Popular Branded</span>
+            <strong class="col-name">Pan 40 Tablet</strong>
+            <span class="col-salt">Pantoprazole 40mg</span>
+            <div class="col-price">₹165.00</div>
+            <small class="col-pack">Strip of 15 tablets</small>
+          </div>
+          <div class="comp-vs">VS</div>
+          <div class="comp-col generic-col">
+            <span class="col-kicker">CareNest Equivalent</span>
+            <strong class="col-name">Pantocare 40</strong>
+            <span class="col-salt">Pantoprazole 40mg (Identical Salt)</span>
+            <div class="col-price text-teal">₹42.90</div>
+            <small class="col-pack">Strip of 15 tablets</small>
+          </div>
+        </div>
+        <div class="comp-footer">
+          <span class="you-save-text">You save <strong>₹122.10</strong> on every strip!</span>
+          <a href="/documents" class="btn btn-sm btn-outline-teal">Order with Rx</a>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="comparison-card">
+        <div class="comp-header">
+          <span class="comp-category">Cardiac & Cholesterol</span>
+          <span class="savings-tag">Save 75%</span>
+        </div>
+        <div class="comp-body">
+          <div class="comp-col brand-col">
+            <span class="col-kicker">Popular Branded</span>
+            <strong class="col-name">Atorva 20 Tablet</strong>
+            <span class="col-salt">Atorvastatin 20mg</span>
+            <div class="col-price">₹280.00</div>
+            <small class="col-pack">Strip of 15 tablets</small>
+          </div>
+          <div class="comp-vs">VS</div>
+          <div class="comp-col generic-col">
+            <span class="col-kicker">CareNest Equivalent</span>
+            <strong class="col-name">Atorin-20 Generic</strong>
+            <span class="col-salt">Atorvastatin 20mg (Identical Salt)</span>
+            <div class="col-price text-teal">₹68.50</div>
+            <small class="col-pack">Strip of 15 tablets</small>
+          </div>
+        </div>
+        <div class="comp-footer">
+          <span class="you-save-text">You save <strong>₹211.50</strong> on every strip!</span>
+          <a href="/documents" class="btn btn-sm btn-outline-teal">Order with Rx</a>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="comparison-card">
+        <div class="comp-header">
+          <span class="comp-category">Blood Pressure</span>
+          <span class="savings-tag">Save 73%</span>
+        </div>
+        <div class="comp-body">
+          <div class="comp-col brand-col">
+            <span class="col-kicker">Popular Branded</span>
+            <strong class="col-name">Telma 40 Tablet</strong>
+            <span class="col-salt">Telmisartan 40mg</span>
+            <div class="col-price">₹145.00</div>
+            <small class="col-pack">Strip of 15 tablets</small>
+          </div>
+          <div class="comp-vs">VS</div>
+          <div class="comp-col generic-col">
+            <span class="col-kicker">CareNest Equivalent</span>
+            <strong class="col-name">Telmipres 40</strong>
+            <span class="col-salt">Telmisartan 40mg (Identical Salt)</span>
+            <div class="col-price text-teal">₹38.90</div>
+            <small class="col-pack">Strip of 15 tablets</small>
+          </div>
+        </div>
+        <div class="comp-footer">
+          <span class="you-save-text">You save <strong>₹106.10</strong> on every strip!</span>
+          <a href="/documents" class="btn btn-sm btn-outline-teal">Order with Rx</a>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="comparison-card">
+        <div class="comp-header">
+          <span class="comp-category">Diabetes Care</span>
+          <span class="savings-tag">Save 71%</span>
+        </div>
+        <div class="comp-body">
+          <div class="comp-col brand-col">
+            <span class="col-kicker">Popular Branded</span>
+            <strong class="col-name">Glycomet-GP 2</strong>
+            <span class="col-salt">Metformin + Glimepiride</span>
+            <div class="col-price">₹190.00</div>
+            <small class="col-pack">Strip of 15 tablets</small>
+          </div>
+          <div class="comp-vs">VS</div>
+          <div class="comp-col generic-col">
+            <span class="col-kicker">CareNest Equivalent</span>
+            <strong class="col-name">Met-Glim 2 Forte</strong>
+            <span class="col-salt">Metformin + Glimepiride</span>
+            <div class="col-price text-teal">₹55.00</div>
+            <small class="col-pack">Strip of 15 tablets</small>
+          </div>
+        </div>
+        <div class="comp-footer">
+          <span class="you-save-text">You save <strong>₹135.00</strong> on every strip!</span>
+          <a href="/documents" class="btn btn-sm btn-outline-teal">Order with Rx</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Health Categories Section -->
+  <section class="section-container bg-surface" id="categories">
+    <div class="section-header">
+      <span class="section-kicker">Full Range of Care</span>
+      <h2 class="section-title">Shop by Health Category</h2>
+      <p class="section-desc">Over 1,20,000+ medicines and wellness products categorized for easy access</p>
+    </div>
+
+    <div class="category-grid">
+      <div class="category-card" onclick="triggerSearch('Diabetes')">
+        <div class="cat-icon-wrap bg-teal-soft">🩺</div>
+        <h4 class="cat-title">Diabetes Care</h4>
+        <span class="cat-subtitle">Insulin, Metformin, Strips</span>
+      </div>
+
+      <div class="category-card" onclick="triggerSearch('Cardiac')">
+        <div class="cat-icon-wrap bg-orange-soft">❤️</div>
+        <h4 class="cat-title">Cardiac & BP</h4>
+        <span class="cat-subtitle">Statins, Beta Blockers</span>
+      </div>
+
+      <div class="category-card" onclick="triggerSearch('Stomach')">
+        <div class="cat-icon-wrap bg-teal-soft">💊</div>
+        <h4 class="cat-title">Stomach & Gut</h4>
+        <span class="cat-subtitle">Antacids, PPIs, Probiotics</span>
+      </div>
+
+      <div class="category-card" onclick="triggerSearch('Pain Relief')">
+        <div class="cat-icon-wrap bg-orange-soft">⚡</div>
+        <h4 class="cat-title">Pain Relief</h4>
+        <span class="cat-subtitle">Analgesics, Anti-inflammatory</span>
+      </div>
+
+      <div class="category-card" onclick="triggerSearch('Vitamins')">
+        <div class="cat-icon-wrap bg-teal-soft">🌿</div>
+        <h4 class="cat-title">Vitamins & Minerals</h4>
+        <span class="cat-subtitle">Vitamin D3, B12, Zinc</span>
+      </div>
+
+      <div class="category-card" onclick="triggerSearch('Ayurvedic')">
+        <div class="cat-icon-wrap bg-orange-soft">🍃</div>
+        <h4 class="cat-title">Ayurvedic Wellness</h4>
+        <span class="cat-subtitle">Chyawanprash, Ashwagandha</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section (Upload -> Verify -> Deliver) -->
+  <section class="section-container" id="how-it-works">
+    <div class="section-header">
+      <span class="section-kicker">Simple 3-Step Process</span>
+      <h2 class="section-title">How CareNest Works</h2>
+      <p class="section-desc">Getting genuine medicines with maximum savings is effortless</p>
+    </div>
+
+    <div class="steps-grid">
+      <!-- Step 1 -->
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+          </svg>
+        </div>
+        <h3 class="step-title">Upload Prescription</h3>
+        <p class="step-text">
+          Snap a clear picture or upload a PDF of your doctor's valid prescription onto our secure portal.
+        </p>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <h3 class="step-title">Pharmacist Verification</h3>
+        <p class="step-text">
+          Our registered pharmacist reviews the prescription, confirms dosages, and suggests doctor-approved generic substitutes saving up to 72%.
+        </p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
+          </svg>
+        </div>
+        <h3 class="step-title">Doorstep Delivery</h3>
+        <p class="step-text">
+          Medicines are packed in tamper-proof, temperature-controlled packaging and delivered right to your home with free shipping on orders over ₹499.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefits Section -->
+  <section class="section-container bg-surface">
+    <div class="section-header">
+      <span class="section-kicker">Why Millions Trust CareNest</span>
+      <h2 class="section-title">The CareNest Quality Guarantee</h2>
+    </div>
+
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="benefit-icon">🛡️</div>
+        <h4>100% Genuine Medicines</h4>
+        <p>Direct sourcing from top licensed manufacturers and ISO-certified suppliers with full batch traceability.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">🧪</div>
+        <h4>Triple Quality Audit</h4>
+        <p>Every medicine undergoes chemical composition verification, disintegration audit, and packaging integrity tests.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">👨‍⚕️</div>
+        <h4>Free Pharmacist Support</h4>
+        <p>Speak directly to our licensed clinical pharmacists to clear doubts about dosages, side-effects, or food interactions.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">❄️</div>
+        <h4>Cold-Chain Logistics</h4>
+        <p>Special insulated transport for temperature-sensitive drugs like Insulin and biological injections.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom CTA Banner -->
+  <section class="cta-banner">
+    <div class="cta-banner-inner">
+      <div class="cta-text">
+        <h2>Start Saving on Your Prescriptions Today</h2>
+        <p>Join over 10 Lakh families cutting their regular healthcare expenses with CareNest.</p>
+      </div>
+      <div class="cta-actions">
+        <a href="/documents" class="btn btn-accent btn-lg">Upload Prescription Now</a>
+        <a href="/signup" class="btn btn-outline-white btn-lg">Create Free Account</a>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function triggerSearch(term) {
+    const input = document.getElementById('global-search-input');
+    if (input) {
+      input.value = term;
+      input.focus();
+      handleGlobalSearch();
+    }
+  }
+</script>
+{% endblock %}

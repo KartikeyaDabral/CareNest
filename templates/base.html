@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}CareNest - Online Pharmacy & Healthcare Platform{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}CareNest is India's trusted online pharmacy offering genuine medicines, doctor-approved generic substitutes with up to 72% savings, and doorstep delivery.{% endblock %}">
+  
+  <!-- Favicon / SVG Icon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230b8471'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-4H7v-2h4V7h2v4h4v2h-4v4z'/></svg>" type="image/svg+xml">
+
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="/static/css/style.css">
+  {% block extra_css %}{% endblock %}
+</head>
+<body data-authenticated="{{ 'true' if is_authenticated else 'false' }}">
+
+  <!-- Sticky Header & Navigation -->
+  <header class="site-header" id="site-header">
+    <div class="nav-container">
+      <!-- Logo -->
+      <a href="/" class="brand-logo" aria-label="CareNest Home">
+        <div class="logo-icon-wrap">
+          <svg class="logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="32" height="32" rx="8" fill="#0b8471"/>
+            <path d="M16 7V25M7 16H25" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M22 10C24 13 24 19 22 22C19 24 13 24 10 22" stroke="#ff7043" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="logo-text-group">
+          <span class="logo-name">Care<span>Nest</span></span>
+          <span class="logo-tagline">Genuine E-Pharmacy</span>
+        </div>
+      </a>
+
+      <!-- Search Bar -->
+      <div class="nav-search-wrap">
+        <form class="nav-search-form" id="global-search-form" onsubmit="event.preventDefault(); handleGlobalSearch();">
+          <svg class="search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 19l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0010.15 10.15z"/>
+          </svg>
+          <input type="text" id="global-search-input" class="nav-search-input" placeholder="Search for medicines, generics, health products..." autocomplete="off">
+          <button type="button" class="search-clear-btn hidden" id="search-clear-btn" aria-label="Clear search">✕</button>
+        </form>
+        <!-- Search suggestions dropdown -->
+        <div class="search-dropdown hidden" id="search-dropdown">
+          <div class="search-dropdown-header">Trending Searches & Generic Alternatives</div>
+          <div class="search-suggestions-list" id="search-suggestions-list">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Navigation Actions -->
+      <nav class="nav-actions" id="nav-actions">
+        <!-- Guest View (shown when logged out) -->
+        <div class="guest-actions" id="guest-nav">
+          <a href="/login" class="btn btn-outline-teal btn-sm">Login</a>
+          <a href="/signup" class="btn btn-accent btn-sm">Sign Up</a>
+        </div>
+
+        <!-- Authenticated View (shown when logged in) -->
+        <div class="user-nav-dropdown hidden" id="user-nav">
+          <button type="button" class="user-profile-trigger" id="user-menu-btn" aria-expanded="false" aria-haspopup="true">
+            <span class="user-avatar-circle" id="user-avatar-initials">CN</span>
+            <span class="user-name-label" id="user-display-name">My Account</span>
+            <svg class="chevron-icon" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg>
+          </button>
+          
+          <div class="dropdown-menu hidden" id="user-dropdown-menu">
+            <div class="dropdown-header">
+              <strong id="dropdown-user-name">Welcome</strong>
+              <small id="dropdown-user-email">user@carenest.in</small>
+            </div>
+            <div class="dropdown-divider"></div>
+            <a href="/profile" class="dropdown-item">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>
+              My Profile
+            </a>
+            <a href="/documents" class="dropdown-item">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/></svg>
+              Upload Documents
+            </a>
+            <a href="/register" class="dropdown-item hidden" id="dropdown-complete-reg">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>
+              Complete Registration
+            </a>
+            <div class="dropdown-divider"></div>
+            <button type="button" class="dropdown-item text-danger" id="logout-btn">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/></svg>
+              Logout
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Hamburger Toggle -->
+        <button type="button" class="mobile-menu-toggle" id="mobile-menu-btn" aria-label="Toggle navigation">
+          <span></span><span></span><span></span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-nav-drawer hidden" id="mobile-nav-drawer">
+      <div class="mobile-nav-links">
+        <a href="/" class="mobile-link">Home</a>
+        <a href="/documents" class="mobile-link">Upload Prescription</a>
+        <a href="/profile" class="mobile-link auth-only">My Profile</a>
+        <a href="/login" class="mobile-link guest-only">Login</a>
+        <a href="/signup" class="mobile-link guest-only">Sign Up</a>
+        <button type="button" class="mobile-link text-danger auth-only" id="mobile-logout-btn">Logout</button>
+      </div>
+    </div>
+
+    <!-- Truemeds-inspired Trust Strip -->
+    <div class="trust-strip">
+      <div class="trust-strip-inner">
+        <div class="trust-item">
+          <svg class="trust-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 1.944A11.954 11.954 0 012.166 5C2.056 5.649 2 6.319 2 7c0 5.225 3.34 9.67 8 11.317C14.66 16.67 18 12.225 18 7c0-.682-.057-1.35-.166-2.001A11.954 11.954 0 0110 1.944zM11 14a1 1 0 11-2 0 1 1 0 012 0zm0-7a1 1 0 100 2v3a1 1 0 100-2V7z" clip-rule="evenodd"/></svg>
+          <span>100% Genuine Medicines</span>
+        </div>
+        <div class="trust-item">
+          <svg class="trust-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/><path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"/></svg>
+          <span>Free Delivery over ₹499</span>
+        </div>
+        <div class="trust-item highlight">
+          <svg class="trust-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"/></svg>
+          <span>Save up to 72% on Generic Substitutes</span>
+        </div>
+        <div class="trust-item">
+          <svg class="trust-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          <span>Licensed Pharmacy Network</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Hook -->
+  <main class="main-content" id="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Global Toast Notification Center -->
+  <div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Global Modal Box -->
+  <div class="modal-backdrop hidden" id="global-modal-backdrop">
+    <div class="modal-card" id="global-modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-title">Modal Title</h3>
+        <button type="button" class="modal-close-btn" id="modal-close-btn" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <!-- Content inserted dynamically -->
+      </div>
+      <div class="modal-footer" id="modal-footer">
+        <!-- Actions inserted dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-grid">
+        <!-- Col 1: Brand & Promise -->
+        <div class="footer-col">
+          <div class="footer-brand">
+            <span class="logo-name">Care<span>Nest</span></span>
+          </div>
+          <p class="footer-desc">
+            CareNest is a licensed digital healthcare platform dedicated to making essential healthcare affordable. 
+            Save up to 72% on doctor-approved generic substitutes tested for purity, potency, and safety.
+          </p>
+          <div class="contact-pill">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 4V3z"/></svg>
+            <div>
+              <span class="contact-label">Toll-Free Pharmacy Helpline</span>
+              <strong>1800-890-NEST (6378)</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Col 2: Healthcare Categories -->
+        <div class="footer-col">
+          <h4 class="footer-heading">Top Categories</h4>
+          <ul class="footer-links">
+            <li><a href="/#categories">Diabetes Care & Insulin</a></li>
+            <li><a href="/#categories">Cardiac & Blood Pressure</a></li>
+            <li><a href="/#categories">Gastro & Stomach Care</a></li>
+            <li><a href="/#categories">Pain Relief & Anti-inflammatory</a></li>
+            <li><a href="/#categories">Vitamins, Minerals & Supplements</a></li>
+            <li><a href="/#categories">Ayurveda & Immunity Boosters</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Quick Navigation -->
+        <div class="footer-col">
+          <h4 class="footer-heading">CareNest Services</h4>
+          <ul class="footer-links">
+            <li><a href="/documents">Upload Prescription</a></li>
+            <li><a href="/#savings-calculator">Generic Savings Guide</a></li>
+            <li><a href="/register">Patient Registration</a></li>
+            <li><a href="/profile">My Health Profile</a></li>
+            <li><a href="/login">Patient Portal Login</a></li>
+            <li><a href="/signup">Create New Account</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 4: Quality & Compliance -->
+        <div class="footer-col">
+          <h4 class="footer-heading">Trust & Security</h4>
+          <div class="compliance-badges">
+            <div class="badge-item">
+              <span class="badge-dot"></span>
+              <div>
+                <strong>CDSCO Compliant</strong>
+                <small>Licensed wholesale & retail supply</small>
+              </div>
+            </div>
+            <div class="badge-item">
+              <span class="badge-dot"></span>
+              <div>
+                <strong>Triple Quality Checked</strong>
+                <small>Pharmacist prescription audit</small>
+              </div>
+            </div>
+            <div class="badge-item">
+              <span class="badge-dot"></span>
+              <div>
+                <strong>256-Bit SSL Encrypted</strong>
+                <small>Secure health record vault</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Legal & Disclaimer Strip -->
+      <div class="footer-bottom">
+        <p class="disclaimer-text">
+          <strong>Medical Disclaimer:</strong> CareNest is an online platform facilitating orders through registered licensed pharmacies. 
+          Prescription drugs require a valid medical prescription from a registered medical practitioner. 
+          CareNest does not substitute professional medical diagnosis or clinical treatment.
+        </p>
+        <div class="copyright-row">
+          <span>&copy; 2026 CareNest Healthcare Technologies Pvt Ltd. All rights reserved.</span>
+          <div class="bottom-links">
+            <span>Privacy Policy</span>
+            <span>·</span>
+            <span>Terms of Use</span>
+            <span>·</span>
+            <span>Grievance Officer</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Base JS logic -->
+  <script src="/static/js/main.js"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

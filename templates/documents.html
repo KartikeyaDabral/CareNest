@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Healthcare Documents & Prescriptions - CareNest{% endblock %}
+
+{% block content %}
+<div class="documents-page-wrapper">
+  <div class="page-container">
+    <!-- Header banner -->
+    <div class="doc-page-header">
+      <div class="doc-header-text">
+        <span class="badge-teal">Prescription & Medical Records Vault</span>
+        <h2>Manage Healthcare Documents</h2>
+        <p>Upload prescriptions to order medicines with up to 72% generic savings. Sourced files are encrypted and audited by certified pharmacists.</p>
+      </div>
+      <div class="doc-header-stats">
+        <div class="stat-pill">
+          <span class="stat-pill-label">Total Documents</span>
+          <strong class="stat-pill-val" id="doc-count-badge">0</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload Card -->
+    <div class="upload-card">
+      <div class="upload-card-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+        </svg>
+        <h3>Upload New Document</h3>
+      </div>
+
+      <form id="doc-upload-form" onsubmit="event.preventDefault(); handleDocumentUpload();">
+        <div class="upload-form-row">
+          <div class="form-group flex-1">
+            <label for="doc_type_select" class="form-label">Document Category <span class="required-star">*</span></label>
+            <select id="doc_type_select" name="document_type" class="form-select" required>
+              <option value="Prescription" selected>Prescription (Doctor's Rx)</option>
+              <option value="ID Proof">ID Proof (Aadhaar / Voter ID / Passport)</option>
+              <option value="Address Proof">Address Proof (Electricity Bill / Rent Agreement)</option>
+              <option value="Medical Report">Medical Report (Lab Test, Blood Work, X-Ray)</option>
+              <option value="Insurance">Health Insurance Card / Policy</option>
+              <option value="Other">Other Healthcare Document</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Drag & Drop Zone -->
+        <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+          <input type="file" id="file-input" name="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png">
+          
+          <div class="drop-zone-idle" id="drop-zone-idle">
+            <div class="drop-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <h4>Drag & drop your file here, or <span class="text-teal font-semibold">browse files</span></h4>
+            <p class="drop-instructions">Supported formats: <strong>PDF, JPG, PNG</strong> · Max allowed size: <strong>5 MB</strong></p>
+          </div>
+
+          <!-- File Selection Preview -->
+          <div class="drop-zone-preview hidden" id="drop-zone-preview">
+            <div class="preview-file-info">
+              <div class="preview-thumbnail-wrap" id="preview-thumb-container">
+                <!-- Thumbnail or PDF icon injected here -->
+              </div>
+              <div class="preview-details">
+                <strong id="selected-file-name">filename.pdf</strong>
+                <span id="selected-file-size">145 KB</span>
+                <span class="preview-format-tag" id="selected-file-type">PDF</span>
+              </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-teal" onclick="event.stopPropagation(); clearSelectedFile();">
+              Change File
+            </button>
+          </div>
+        </div>
+
+        <div class="field-error-msg" id="upload-error-msg"></div>
+
+        <div class="upload-actions mt-4">
+          <button type="submit" class="btn btn-accent btn-md" id="upload-submit-btn" disabled>
+            <span class="btn-text">Upload & Submit Document</span>
+            <span class="spinner hidden" id="upload-spinner"></span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Uploaded Documents Table Section -->
+    <div class="doc-table-card">
+      <div class="doc-table-header">
+        <div>
+          <h3>Uploaded Documents & Records</h3>
+          <p>Audited records and verified prescriptions tracked in <code>document_track</code></p>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-teal" onclick="loadUserDocuments()">
+          <svg viewBox="0 0 20 20" fill="currentColor" style="width:14px;height:14px;margin-right:4px;"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg>
+          Refresh
+        </button>
+      </div>
+
+      <!-- Loading State -->
+      <div class="table-loading-state hidden" id="table-loading">
+        <div class="spinner spinner-teal"></div>
+        <span>Retrieving your encrypted healthcare documents...</span>
+      </div>
+
+      <!-- Empty State -->
+      <div class="table-empty-state hidden" id="table-empty">
+        <div class="empty-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+        </div>
+        <h4>No Documents Uploaded Yet</h4>
+        <p>Upload your doctor's prescription above to start receiving generic medicine recommendations and save up to 72%.</p>
+      </div>
+
+      <!-- Table Container -->
+      <div class="responsive-table-wrap" id="table-wrapper">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Document Name</th>
+              <th>Category</th>
+              <th>File Size</th>
+              <th>Uploaded Date</th>
+              <th>Verification Status</th>
+              <th class="text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="documents-table-body">
+            <!-- Dynamically populated rows -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Preview Modal -->
+<div class="modal-backdrop hidden" id="doc-preview-modal">
+  <div class="modal-card modal-lg">
+    <div class="modal-header">
+      <h3 class="modal-title" id="preview-modal-title">Document Preview</h3>
+      <button type="button" class="modal-close-btn" onclick="closeDocPreviewModal()">✕</button>
+    </div>
+    <div class="modal-body" id="preview-modal-content">
+      <!-- Image or PDF viewer embedded -->
+    </div>
+    <div class="modal-footer">
+      <a href="#" id="preview-download-link" class="btn btn-outline-teal btn-sm" download>
+        Download Original File
+      </a>
+      <button type="button" class="btn btn-accent btn-sm" onclick="closeDocPreviewModal()">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Replace Modal -->
+<div class="modal-backdrop hidden" id="doc-replace-modal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 class="modal-title">Replace / Update Document</h3>
+      <button type="button" class="modal-close-btn" onclick="closeDocReplaceModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="replace-doc-id">
+      <div class="form-group mb-3">
+        <label for="replace-doc-type" class="form-label">Update Document Category</label>
+        <select id="replace-doc-type" class="form-select">
+          <option value="Prescription">Prescription</option>
+          <option value="ID Proof">ID Proof</option>
+          <option value="Address Proof">Address Proof</option>
+          <option value="Medical Report">Medical Report</option>
+          <option value="Insurance">Insurance</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="replace-file-input" class="form-label">Upload New File (Optional, max 5MB)</label>
+        <input type="file" id="replace-file-input" class="form-input" accept=".pdf,.jpg,.jpeg,.png">
+      </div>
+      <div class="field-error-msg" id="replace-error-msg"></div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-teal btn-sm" onclick="closeDocReplaceModal()">Cancel</button>
+      <button type="button" class="btn btn-accent btn-sm" id="confirm-replace-btn" onclick="confirmReplaceDocument()">Save Updates</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-backdrop hidden" id="doc-delete-modal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 class="modal-title">Confirm Document Removal</h3>
+      <button type="button" class="modal-close-btn" onclick="closeDocDeleteModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="delete-doc-id">
+      <p>Are you sure you want to delete <strong id="delete-doc-name">this document</strong>? This will remove the file from your healthcare records.</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-teal btn-sm" onclick="closeDocDeleteModal()">Cancel</button>
+      <button type="button" class="btn btn-danger btn-sm" id="confirm-delete-btn" onclick="confirmDeleteDocument()">Delete Document</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/documents.js"></script>
+{% endblock %}
