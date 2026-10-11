@@ -67,10 +67,12 @@ def upload_document():
         INSERT INTO document_track (
             user_id, document_type, original_file_name, stored_file_name,
             file_path, file_size_kb, mime_type, status, uploaded_at, updated_at, is_deleted
-        ) VALUES (
-            %s, %s, %s, %s,
-            %s, %s, %s, 'Pending', NOW(), NOW(), FALSE
         )
+VALUES (
+    %s, %s, %s, %s,
+    %s, %s, %s, 'Pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, FALSE
+)
+
         RETURNING document_id;
         """,
         (
@@ -195,7 +197,7 @@ def update_document(doc_id):
                 file_size_kb = %s,
                 mime_type = %s,
                 status = 'Pending',
-                updated_at = NOW()
+                updated_at = CURRENT_TIMESTAMP
             WHERE document_id = %s;
             """,
             (document_type, original_name, new_stored_name, new_file_path, file_size_kb, mime_type, doc_id),
@@ -203,7 +205,7 @@ def update_document(doc_id):
         )
     elif document_type:
         query_db(
-            "UPDATE document_track SET document_type = %s, updated_at = NOW() WHERE document_id = %s",
+            "UPDATE document_track SET document_type = %s, updated_at = CURRENT_TIMESTAMP WHERE document_id = %s",
             (document_type, doc_id),
             commit=True
         )
@@ -239,7 +241,7 @@ def delete_document(doc_id):
 
     # Soft delete in table
     query_db(
-        "UPDATE document_track SET is_deleted = TRUE, updated_at = NOW() WHERE document_id = %s",
+        "UPDATE document_track SET is_deleted = TRUE, updated_at = CURRENT_TIMESTAMP WHERE document_id = %s",
         (doc_id,),
         commit=True
     )

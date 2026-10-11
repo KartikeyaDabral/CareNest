@@ -8,6 +8,15 @@ from flask import current_app, g
 _db_pool = None
 _use_sqlite = False
 
+def _sqlite_database_path(app):
+    db_url = app.config.get("DATABASE_URL", "")
+    if db_url.startswith("sqlite:///"):
+        path = db_url[len("sqlite:///"):]
+        if path.startswith("/"):
+            return path
+        return os.path.join(app.config["BASE_DIR"], path)
+    return os.path.join(app.config["BASE_DIR"], "carenest.sqlite3")
+
 def init_pool(app):
     global _db_pool, _use_sqlite
     db_url = app.config.get("DATABASE_URL", "")
@@ -28,9 +37,10 @@ def init_pool(app):
             _use_sqlite = True
     else:
         _use_sqlite = True
+        app.logger.info("Using local SQLite database.")
 
     # Setup SQLite database as fallback
-    db_path = os.path.join(app.config["BASE_DIR"], "carenest.sqlite3")
+    db_path = _sqlite_database_path(app)
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     # Run table creation for sqlite
@@ -97,9 +107,10 @@ def init_pool(app):
 def get_db():
     if "db" not in g:
         if _use_sqlite or _db_pool is None:
-            db_path = os.path.join(current_app.config["BASE_DIR"], "carenest.sqlite3")
+            db_path = _sqlite_database_path(current_app)
             conn = sqlite3.connect(db_path)
             conn.row_factory = sqlite3.Row
+            conn.execute("PRAGMA foreign_keys = ON")
             g.db = conn
             g.is_sqlite = True
         else:
@@ -113,37 +124,45 @@ def close_db(e=None):
         if getattr(g, "is_sqlite", False):
             db.close()
         elif _db_pool:
-            _db_pool.putconn(db)
+            # A request may finish after read-only queries or an early return
+            # with an open PostgreSQL transaction. Reset the connection before
+            # another request borrows it from the pool.
+            try:
+                db.rollback()
+            except Exception:
+                _db_pool.putconn(db, close=True)
+            else:
+                _db_pool.putconn(db)
 
 def query_db(query, args=(), one=False, commit=False):
     db = get_db()
     is_sqlite = getattr(g, "is_sqlite", False)
-    
-    # In SQLite, replace %s placeholders with ?
-    if is_sqlite:
-        formatted_query = query.replace("%s", "?")
-        cursor = db.cursor()
+
+    # Application queries use psycopg2's %s style. Translate it for SQLite.
+    formatted_query = query.replace("%s", "?") if is_sqlite else query
+    cursor = db.cursor()
+    try:
         cursor.execute(formatted_query, args)
+
+        # Read RETURNING rows before committing. SQLite rejects a commit while
+        # a RETURNING statement still has unread rows.
+        rows = cursor.fetchall() if cursor.description else []
+        result = [dict(row) for row in rows]
         if commit:
             db.commit()
-            last_id = cursor.lastrowid
-            cursor.close()
-            return last_id
-        rv = [dict(row) for row in cursor.fetchall()]
+            if is_sqlite:
+                # lastrowid is available for inserts without RETURNING; use
+                # the returned value when the query explicitly requested it.
+                if result:
+                    return next(iter(result[0].values()))
+                return cursor.lastrowid
+            if result and "RETURNING" in query.upper():
+                return next(iter(result[0].values()))
+            return None
+
+        return (result[0] if result else None) if one else result
+    except Exception:
+        db.rollback()
+        raise
+    finally:
         cursor.close()
-        return (rv[0] if rv else None) if one else rv
-    else:
-        cursor = db.cursor()
-        cursor.execute(query, args)
-        if commit:
-            db.commit()
-            last_id = None
-            if "RETURNING" in query.upper():
-                row = cursor.fetchone()
-                if row:
-                    last_id = list(row.values())[0]
-            cursor.close()
-            return last_id
-        rv = cursor.fetchall()
-        cursor.close()
-        return (dict(rv[0]) if rv else None) if one else [dict(r) for r in rv]

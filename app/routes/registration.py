@@ -72,7 +72,7 @@ def create_registration():
             %s, %s, %s, %s, %s, %s,
             %s, %s, %s, %s, %s, %s, %s,
             %s, %s, %s,
-            %s, %s, NOW(), NOW()
+            %s, %s, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
         )
         RETURNING registration_id;
         """,
@@ -82,17 +82,18 @@ def create_registration():
             allergies, chronic_conditions, current_medications,
             emergency_contact_name, emergency_contact_phone
         ),
-        commit=True
+        one=True
     )
 
-    # Mark user as registered
-    query_db("UPDATE user_login SET is_registered = TRUE, updated_at = NOW() WHERE user_id = %s", (user_id,), commit=True)
+    # Keep profile creation and the account flag in one transaction. The
+    # second query commits both changes together.
+    query_db("UPDATE user_login SET is_registered = TRUE, updated_at = CURRENT_TIMESTAMP WHERE user_id = %s", (user_id,), commit=True)
 
     return jsonify({
         "success": True,
         "message": "Healthcare profile registered successfully!",
         "data": {
-            "registration_id": reg_id,
+            "registration_id": reg_id["registration_id"],
             "user_id": user_id,
             "first_name": first_name,
             "last_name": last_name
@@ -189,7 +190,7 @@ def update_registration():
                 %s, %s, %s, %s, %s, %s,
                 %s, %s, %s, %s, %s, %s, %s,
                 %s, %s, %s,
-                %s, %s, NOW(), NOW()
+                %s, %s, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
             );
             """,
             (
@@ -221,7 +222,7 @@ def update_registration():
                 current_medications = %s,
                 emergency_contact_name = %s,
                 emergency_contact_phone = %s,
-                updated_at = NOW()
+                updated_at = CURRENT_TIMESTAMP
             WHERE user_id = %s;
             """,
             (
@@ -234,7 +235,7 @@ def update_registration():
             commit=True
         )
 
-    query_db("UPDATE user_login SET is_registered = TRUE, updated_at = NOW() WHERE user_id = %s", (user_id,), commit=True)
+    query_db("UPDATE user_login SET is_registered = TRUE, updated_at = CURRENT_TIMESTAMP WHERE user_id = %s", (user_id,), commit=True)
 
     return jsonify({
         "success": True,

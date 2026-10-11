@@ -13,7 +13,9 @@ class Config:
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=24)
     JWT_ACCESS_COOKIE_NAME = "carenest_token"
 
-    DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/carenest_db")
+    # SQLite is the zero-configuration local default. Set DATABASE_URL to a
+    # PostgreSQL URL when a PostgreSQL server is intentionally configured.
+    DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///carenest.sqlite3")
     
     BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
     UPLOAD_FOLDER = os.path.join(BASE_DIR, os.getenv("UPLOAD_FOLDER", "uploads"))

@@ -8,7 +8,7 @@ CareNest is a full-stack e-pharmacy and healthcare management web application in
 
 - **Front End:** Plain HTML5, custom CSS3 (CSS variables, Flexbox/Grid, zero external framework slop), Vanilla JavaScript (ES6+), and Native Fetch API.
 - **Back End:** Python Flask (REST API + Jinja2 template rendering).
-- **Database:** PostgreSQL with `psycopg2` connection pooling and fallback SQLite support.
+- **Database:** SQLite by default for local development, with optional PostgreSQL support through `DATABASE_URL`.
 - **Authentication & Security:** 
   - Password hashing with `bcrypt`.
   - HTTP-only JWT cookies (`Flask-JWT-Extended` / `jsonwebtoken`).
@@ -23,7 +23,7 @@ CareNest is a full-stack e-pharmacy and healthcare management web application in
 
 ---
 
-## 2. Database Schema (PostgreSQL, 3 Tables)
+## 2. Database Schema (3 Tables)
 
 ```
 ┌─────────────────────────────────┐
@@ -75,9 +75,9 @@ CareNest is a full-stack e-pharmacy and healthcare management web application in
 
 ---
 
-## 3. Quick Start & Setup Commands (Flask + PostgreSQL)
+## 3. Quick Start & Setup Commands (macOS + SQLite)
 
-Follow these exact steps to run the Flask application and PostgreSQL database locally:
+SQLite is the zero-configuration local setup. Flask creates `carenest.sqlite3` and its tables automatically when the app starts. PostgreSQL is optional.
 
 ### Step 1: Create and Activate Python Virtual Environment
 ```bash
@@ -102,47 +102,31 @@ pip install -r requirements.txt
 ### Step 3: Configure Environment Variables
 Copy `.env.example` to `.env`:
 ```bash
-cp .env.example .env
+cp -n .env.example .env
 ```
-Ensure your `DATABASE_URL` in `.env` points to your PostgreSQL instance:
-```env
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/carenest_db
-SECRET_KEY=carenest_super_secret_session_key_change_in_production_2026
-JWT_SECRET_KEY=carenest_jwt_secret_signing_key_secure_vault_9921
-UPLOAD_FOLDER=uploads
-MAX_CONTENT_LENGTH=5242880
-```
+The example file selects SQLite. The database file is created in the project directory the first time Flask starts. Keep that file to preserve local accounts and data.
 
-### Step 4: Create PostgreSQL Database & Apply Schema
-```bash
-# Create the PostgreSQL database (if not already created)
-createdb -U postgres carenest_db
+This repository also contains a separate Express/React prototype (`npm run dev`, port 3000) that stores its data in `carenest_data.json`. It does not use Flask or the SQL database. For the HTML templates, Flask routes, and SQLite fix described here, use `python run.py` and open port 5000.
 
-# Option A: Apply schema via psql
-psql -U postgres -d carenest_db -f schema.sql
-
-# Option B: Run the automatic Python schema migration script
-python init_db.py
-```
-
-### Step 5: Seed Demo Account & Sample Prescription
-```bash
-python seed.py
-```
-
-### Step 6: Start the Flask Web Application
+### Step 4: Start the Flask Web Application
 ```bash
 # Run Flask server (defaults to port 5000)
 python run.py
 ```
 
-Visit **http://localhost:5000** in your web browser!
+Visit **http://localhost:5000** in your browser, create an account at `/signup`, then complete registration at `/register`.
+
+### Optional: Use PostgreSQL
+
+Install and start PostgreSQL separately, create a database and a role that exists on your Mac, then set `DATABASE_URL` in `.env` to that role's connection URL. Apply `schema.sql` before starting Flask. A local PostgreSQL install may not have a role named `postgres`; use your actual role and password.
+
+Flask initializes the SQLite tables automatically, so `init_db.py` is not needed for the local setup. `seed.py` can add or update the demo account and sample document; run it only if you want those records and understand that it changes the database and upload files.
 
 ---
 
 ## 4. Evaluation Demo Account Credentials
 
-You can test the platform instantly using the seeded demo account or create a new account:
+You can test the platform by creating an account on the signup page. The demo account below is only available if `seed.py` has been run against the database you are using:
 - **Email:** `demo@carenest.in`
 - **Mobile:** `9876543210`
 - **Password:** `Password@123`

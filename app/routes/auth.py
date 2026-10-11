@@ -77,7 +77,7 @@ def signup():
     user_id = query_db(
         """
         INSERT INTO user_login (email, mobile, password_hash, is_registered, created_at, updated_at)
-        VALUES (%s, %s, %s, FALSE, NOW(), NOW())
+        VALUES (%s, %s, %s, FALSE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
         RETURNING user_id;
         """,
         (email, mobile, pwd_hash),
@@ -167,7 +167,7 @@ def login():
         if failed >= 5:
             lock_time = datetime.utcnow() + timedelta(minutes=15)
             query_db(
-                "UPDATE user_login SET failed_attempts = %s, locked_until = %s, updated_at = NOW() WHERE user_id = %s",
+                "UPDATE user_login SET failed_attempts = %s, locked_until = %s, updated_at = CURRENT_TIMESTAMP WHERE user_id = %s",
                 (failed, lock_time, user_id),
                 commit=True
             )
@@ -178,7 +178,7 @@ def login():
             }), 403
         else:
             query_db(
-                "UPDATE user_login SET failed_attempts = %s, updated_at = NOW() WHERE user_id = %s",
+                "UPDATE user_login SET failed_attempts = %s, updated_at = CURRENT_TIMESTAMP WHERE user_id = %s",
                 (failed, user_id),
                 commit=True
             )
@@ -191,7 +191,7 @@ def login():
 
     # Login succeeded - reset failed attempts & update last_login
     query_db(
-        "UPDATE user_login SET failed_attempts = 0, locked_until = NULL, last_login_at = NOW(), updated_at = NOW() WHERE user_id = %s",
+        "UPDATE user_login SET failed_attempts = 0, locked_until = NULL, last_login_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE user_id = %s",
         (user_id,),
         commit=True
     )
@@ -278,7 +278,7 @@ def forgot_password():
     if user:
         token, token_hash, expiry = generate_reset_token()
         query_db(
-            "UPDATE user_login SET reset_token_hash = %s, reset_token_expiry = %s, updated_at = NOW() WHERE user_id = %s",
+            "UPDATE user_login SET reset_token_hash = %s, reset_token_expiry = %s, updated_at = CURRENT_TIMESTAMP WHERE user_id = %s",
             (token_hash, expiry, user["user_id"]),
             commit=True
         )
@@ -339,7 +339,7 @@ def reset_password():
     query_db(
         """
         UPDATE user_login
-        SET password_hash = %s, reset_token_hash = NULL, reset_token_expiry = NULL, failed_attempts = 0, locked_until = NULL, updated_at = NOW()
+        SET password_hash = %s, reset_token_hash = NULL, reset_token_expiry = NULL, failed_attempts = 0, locked_until = NULL, updated_at = CURRENT_TIMESTAMP
         WHERE user_id = %s
         """,
         (new_hash, user["user_id"]),
@@ -378,7 +378,7 @@ def change_password():
 
     new_hash = hash_password(new_password)
     query_db(
-        "UPDATE user_login SET password_hash = %s, updated_at = NOW() WHERE user_id = %s",
+        "UPDATE user_login SET password_hash = %s, updated_at = CURRENT_TIMESTAMP WHERE user_id = %s",
         (new_hash, user_id),
         commit=True
     )
